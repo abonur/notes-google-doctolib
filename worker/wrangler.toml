@@ -1,0 +1,7 @@
+name = "doctolib-notes-google"
+main = "worker.js"
+compatibility_date = "2026-06-01"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "4e53087999fa493ea714a017341cf0aa"

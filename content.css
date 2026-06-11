@@ -1,0 +1,57 @@
+.gn-badge {
+  display: inline-flex;
+  align-items: center;
+  /* au-dessus du lien "étiré" (::after, z-index 10) qui couvre toute la carte
+     Doctolib et gobe les clics destinés au badge, mais en dessous de la barre
+     de filtres sticky (un z-index trop haut passait par-dessus en scrollant) */
+  position: relative;
+  z-index: 11;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  vertical-align: middle;
+  white-space: nowrap;
+  cursor: pointer;
+  color: #fff;
+  background: #9e9e9e;
+}
+
+.gn-badge:hover {
+  filter: brightness(1.1);
+  text-decoration: none;
+}
+
+.gn-loading {
+  background: #b0bec5;
+}
+
+.gn-great {
+  background: #1e8e3e;
+}
+
+.gn-good {
+  background: #7cb342;
+}
+
+.gn-ok {
+  background: #f29900;
+}
+
+.gn-bad {
+  background: #d93025;
+}
+
+.gn-none {
+  background: #9e9e9e;
+}
+
+.gn-setup {
+  background: #1a73e8;
+}
+
+.gn-error {
+  background: #757575;
+}
