@@ -69,4 +69,8 @@ fenêtre à 1280×800 et capturez avec ⌘⇧4 puis la barre d'espace.
   dans les résultats de recherche Doctolib.
 
 ## URL de la politique de confidentialité
-À héberger (GitHub Pages, voir PUBLICATION.md) puis coller l'URL ici.
+https://abonur.github.io/notes-google-doctolib/privacy-policy.html (en ligne ✓)
+
+## Captures d'écran
+Prêtes dans `store/captures/` (4 × 1280×800) :
+capture-1-listing, capture-2-zoom, capture-3-avis, capture-4-popup
