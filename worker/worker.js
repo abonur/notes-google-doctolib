@@ -25,8 +25,15 @@ function json(obj, status = 200) {
   return new Response(JSON.stringify(obj), { status, headers: CORS });
 }
 
+// Réponse cacheable : porte l'en-tête Cache-Control que le cache edge respecte.
+function cacheable(body) {
+  return new Response(body, {
+    headers: { ...CORS, "Cache-Control": "public, max-age=" + CACHE_TTL_SECONDS },
+  });
+}
+
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: CORS });
     }
@@ -48,14 +55,27 @@ export default {
     if (ipHits.size > 10000) ipHits.clear();
     if (hits > IP_LIMIT_PER_MINUTE) return json({ error: "rate_limited" }, 429);
 
-    // Cache partagé (KV)
-    const cacheKey = "r:" + q.toLowerCase();
-    const cached = await env.CACHE.get(cacheKey);
+    // Clé normalisée (q en minuscules) partagée par les couches de cache.
+    const normQ = q.toLowerCase();
+    url.searchParams.set("q", normQ);
+    const edgeKey = new Request(url.toString(), { method: "GET" });
+    const cache = caches.default;
+
+    // Couche 1 — cache edge Cloudflare (PoP le plus proche, le plus rapide)
+    const edgeHit = await cache.match(edgeKey);
+    if (edgeHit) return edgeHit;
+
+    // Couche 2 — cache KV partagé (global, tous PoP confondus)
+    const kvKey = "r:" + normQ;
+    const cached = await env.CACHE.get(kvKey);
     if (cached) {
-      return new Response(cached, { headers: CORS });
+      const resp = cacheable(cached);
+      // remonte la valeur dans le cache edge pour les prochains hits locaux
+      ctx.waitUntil(cache.put(edgeKey, resp.clone()));
+      return resp;
     }
 
-    // Appel Google Places API (New)
+    // Couche 3 — Google Places API (New)
     const res = await fetch("https://places.googleapis.com/v1/places:searchText", {
       method: "POST",
       headers: {
@@ -92,7 +112,10 @@ export default {
       : { found: false };
 
     const body = JSON.stringify(out);
-    await env.CACHE.put(cacheKey, body, { expirationTtl: CACHE_TTL_SECONDS });
-    return new Response(body, { headers: CORS });
+    const resp = cacheable(body);
+    // Écrit dans les deux caches sans bloquer la réponse.
+    ctx.waitUntil(env.CACHE.put(kvKey, body, { expirationTtl: CACHE_TTL_SECONDS }));
+    ctx.waitUntil(cache.put(edgeKey, resp.clone()));
+    return resp;
   },
 };
