@@ -70,6 +70,26 @@
       color: #5f6368;
     }
     a { color: #1a73e8; font-size: 12px; }
+    .coffee-row {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+      text-align: center;
+    }
+    a.coffee {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      background: #ffdd00;
+      color: #202124 !important;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+    a.coffee:hover { filter: brightness(0.96); }
+    .coffee-row .note { display: block; margin-top: 8px; color: #9aa0a6; font-size: 11px; }
   </style>
 </head>
 <body>
@@ -94,6 +114,13 @@
   <div class="cache-row">
     <span id="cacheInfo">Cache : …</span>
     <button class="secondary" id="clearCache">Vider le cache</button>
+  </div>
+
+  <div class="coffee-row">
+    <a class="coffee" href="https://buymeacoffee.com/abonur" target="_blank" rel="noopener">
+      ☕ Offrir un café
+    </a>
+    <span class="note">Extension gratuite — un café aide à la maintenir 🙏</span>
   </div>
 
   <script src="popup.js"></script>

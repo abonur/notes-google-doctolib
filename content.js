@@ -3,6 +3,10 @@
 (() => {
   const PROCESSED = "gnDone";
 
+  // Notes indexées par identifiant de cabinet (practice-XXXXX) : sert à colorer
+  // les marqueurs de la carte, qui portent ce même identifiant dans leur aria-label.
+  const ratingsByPractice = {};
+
   // Interception en phase de CAPTURE au niveau du document : s'exécute avant
   // les gestionnaires de Doctolib (React route dès mousedown sur les cartes).
   // Un seul jeu de listeners pour tous les badges — survit aussi aux
@@ -64,12 +68,21 @@
     const badge = makeBadge();
     h2.insertAdjacentElement("afterend", badge);
 
+    // Identifiant de cabinet, présent dans le lien profil (?pid=practice-XXXXX)
+    // et réutilisé pour relier la note au marqueur de la carte.
+    const link = h2.closest("a");
+    const pid = link ? (link.href.match(/practice-\d+/) || [])[0] : null;
+
     chrome.runtime.sendMessage({ type: "getRating", query }, (resp) => {
       if (chrome.runtime.lastError || !resp) {
         badge.remove();
         return;
       }
       renderBadge(badge, resp, name);
+      if (pid && resp.found && resp.rating != null) {
+        ratingsByPractice[pid] = resp;
+        decorateMarkers();
+      }
     });
   }
 
@@ -151,11 +164,41 @@
     return "gn-bad";
   }
 
-  // Doctolib est une SPA : les résultats arrivent/changent dynamiquement.
+  // Colore les marqueurs de la carte Google selon la note du praticien.
+  // Chaque marqueur Doctolib porte aria-label="marker-profile-…;practice-XXXXX;…".
+  function decorateMarkers() {
+    const map = document.querySelector(".gm-style");
+    if (!map) return;
+    const markers = map.querySelectorAll(
+      '[role="button"][aria-label*="practice-"]'
+    );
+    for (const m of markers) {
+      const pid = (m.getAttribute("aria-label").match(/practice-\d+/) || [])[0];
+      if (!pid) continue;
+      const resp = ratingsByPractice[pid];
+      if (!resp) continue;
+      // Idempotent : Google recrée les marqueurs au zoom/déplacement.
+      if (m.querySelector(".gn-map-badge")) continue;
+
+      const b = document.createElement("span");
+      b.className = "gn-map-badge " + ratingClass(resp.rating);
+      b.textContent = resp.rating.toFixed(1);
+      b.title =
+        `${resp.placeName || ""} — ${resp.rating.toFixed(1)}/5 sur ` +
+        `${resp.count} avis Google`;
+      if (getComputedStyle(m).position === "static") m.style.position = "relative";
+      m.appendChild(b);
+    }
+  }
+
+  // Doctolib est une SPA : les résultats et la carte changent dynamiquement.
   let timer = null;
   const observer = new MutationObserver(() => {
     clearTimeout(timer);
-    timer = setTimeout(scan, 400);
+    timer = setTimeout(() => {
+      scan();
+      decorateMarkers();
+    }, 400);
   });
   observer.observe(document.body, { childList: true, subtree: true });
 

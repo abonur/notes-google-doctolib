@@ -16,6 +16,10 @@ if grep -q 'PROXY_URL = "https://REMPLACEZ-MOI' background.js; then
   echo "   (déployez le worker puis collez son URL — voir worker/DEPLOIEMENT.md)" >&2
   exit 1
 fi
+if grep -q 'VOTRE_PSEUDO' popup.html; then
+  echo "❌ ABANDON : le lien Buy Me a Coffee contient encore VOTRE_PSEUDO dans popup.html" >&2
+  exit 1
+fi
 
 mkdir -p dist
 rm -f "$OUT"

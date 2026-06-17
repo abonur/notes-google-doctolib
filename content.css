@@ -55,3 +55,22 @@
 .gn-error {
   background: #757575;
 }
+
+/* Pastille de note posée au sommet d'un marqueur de la carte Google.
+   La couleur vient des classes gn-great / gn-good / gn-ok / gn-bad. */
+.gn-map-badge {
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1px 5px;
+  border-radius: 9px;
+  font: 700 11px -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.3;
+  color: #fff;
+  white-space: nowrap;
+  border: 1.5px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 50;
+}
