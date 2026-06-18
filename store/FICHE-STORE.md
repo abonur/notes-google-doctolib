@@ -63,8 +63,9 @@ fenêtre à 1280×800 et capturez avec ⌘⇧4 puis la barre d'espace.
   résultats de recherche.
 - `host places.googleapis.com` : récupérer les notes via l'API officielle
   Google Places quand l'utilisateur fournit sa propre clé.
-- `host *.workers.dev` : contacter notre service intermédiaire qui interroge
-  l'API Google Places sans exposer de clé.
+- `host doctolib-notes-google.abonur.workers.dev` : contacter notre unique
+  service intermédiaire qui interroge l'API Google Places sans exposer de clé
+  (domaine exact, pas de joker).
 - Usage unique (single purpose) : afficher la note Google des praticiens
   dans les résultats de recherche Doctolib.
 
