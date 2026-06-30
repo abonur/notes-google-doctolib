@@ -16,6 +16,16 @@ xcrun safari-web-extension-converter "$PWD/safari-src" \
   --bundle-identifier io.ruwad.NotesGoogleDoctolib \
   --no-open --no-prompt --force
 
+# L'App Store exige LSApplicationCategoryType sur l'app macOS (le convertisseur
+# ne le met pas). On l'injecte uniquement sur la cible app (bundle id exact,
+# sans .Extension) en Debug et Release.
+PBX="safari/Notes Google pour Doctolib/Notes Google pour Doctolib.xcodeproj/project.pbxproj"
+if [ -f "$PBX" ]; then
+  sed -i '' 's#\(PRODUCT_BUNDLE_IDENTIFIER = io\.ruwad\.NotesGoogleDoctolib;\)#\1\
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";#g' "$PBX"
+  echo "✅ LSApplicationCategoryType = utilities ajouté à la cible app macOS"
+fi
+
 echo
 echo "✅ Projet Xcode : safari/Notes Google pour Doctolib/Notes Google pour Doctolib.xcodeproj"
 echo "   Ouvrir dans Xcode, choisir l'équipe de signature (RUWAD), puis Archive → App Store Connect."

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Notes Google pour Doctolib",
   "version": "1.2.1",
-  "description": "Affiche la note Google des praticiens directement dans les résultats de recherche Doctolib, avec lien vers les avis.",
+  "description": "Affiche la note Google des praticiens dans les résultats Doctolib, avec lien vers les avis.",
   "permissions": ["storage"],
   "host_permissions": [
     "https://www.doctolib.fr/*",
