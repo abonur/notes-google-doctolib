@@ -4,3 +4,5 @@ node_modules/
 .wrangler/
 store/captures/
 publish/.env
+safari/
+safari-src/

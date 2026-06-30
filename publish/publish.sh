@@ -15,7 +15,7 @@ fi
 set -a; . "$ENV_FILE"; set +a
 
 VERSION=$(python3 -c "import json;print(json.load(open('manifest.json'))['version'])")
-ZIP="dist/notes-google-doctolib-${VERSION}.zip"
+ZIP="dist/notes-google-doctolib-${VERSION}-chrome.zip"
 [ -f "$ZIP" ] || ./build.sh
 
 echo "→ Upload + publication de $ZIP (v$VERSION) sur l'extension $EXTENSION_ID"
