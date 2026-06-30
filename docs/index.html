@@ -9,6 +9,22 @@
 <meta name="author" content="Ruwad" />
 <meta name="theme-color" content="#0B1524" />
 <link rel="icon" href="icon.png" />
+
+<!-- Google Consent Mode v2 (refus par défaut, CNIL) + GA4 -->
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('consent','default',{
+    ad_storage:'denied', ad_user_data:'denied', ad_personalization:'denied',
+    analytics_storage:'denied', wait_for_update:500
+  });
+  try{ if(localStorage.getItem('ngd_consent')==='granted'){ gtag('consent','update',{analytics_storage:'granted'}); } }catch(e){}
+</script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-X6LMX9VR0Y"></script>
+<script>
+  gtag('js', new Date());
+  gtag('config','G-X6LMX9VR0Y',{ anonymize_ip:true });
+</script>
 <link rel="apple-touch-icon" href="icon.png" />
 
 <meta property="og:type" content="website" />
@@ -181,6 +197,21 @@
     .sec{padding:64px 0}
   }
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
+
+  /* Bandeau consentement (CNIL) */
+  .consent{position:fixed;left:16px;right:16px;bottom:16px;z-index:100;max-width:760px;margin:0 auto;
+    background:var(--ink);color:#fff;border-radius:16px;padding:18px 20px;
+    box-shadow:0 24px 60px -20px rgba(11,21,36,.6);display:flex;align-items:center;gap:18px;flex-wrap:wrap;
+    transform:translateY(140%);transition:transform .5s cubic-bezier(.22,.61,.36,1)}
+  .consent.show{transform:none}
+  .consent p{font-size:14px;color:#C7D3E5;flex:1 1 300px;margin:0;line-height:1.55}
+  .consent p a{color:#fff;text-decoration:underline}
+  .consent .acts{display:flex;gap:10px;flex:0 0 auto}
+  .consent button{font-family:var(--body);font-weight:600;font-size:14px;padding:10px 18px;border-radius:10px;cursor:pointer;border:1px solid transparent}
+  .consent .ok{background:var(--brand);color:#fff}
+  .consent .ok:hover{background:#3f8bf0}
+  .consent .no{background:transparent;color:#C7D3E5;border-color:rgba(255,255,255,.22)}
+  .consent .no:hover{color:#fff;border-color:rgba(255,255,255,.45)}
 </style>
 </head>
 <body>
@@ -345,9 +376,34 @@
   </div>
 </footer>
 
+<div class="consent" id="consent" role="dialog" aria-label="Consentement aux cookies de mesure d'audience">
+  <p>On utilise un cookie de mesure d'audience (Google Analytics) pour comprendre comment le site est utilisé. Aucune donnée n'est utilisée à des fins publicitaires. <a href="privacy-policy.html">En savoir plus</a></p>
+  <div class="acts">
+    <button class="no" id="consentNo">Refuser</button>
+    <button class="ok" id="consentOk">Accepter</button>
+  </div>
+</div>
+
 <script>
   const nav=document.getElementById('nav');
   addEventListener('scroll',()=>nav.classList.toggle('scrolled',scrollY>8),{passive:true});
+
+  // Bandeau consentement
+  (function(){
+    var box=document.getElementById('consent');
+    var saved;
+    try{ saved=localStorage.getItem('ngd_consent'); }catch(e){}
+    if(!saved){ setTimeout(function(){box.classList.add('show');},900); }
+    function choose(v){
+      try{ localStorage.setItem('ngd_consent',v); }catch(e){}
+      if(v==='granted' && window.gtag){
+        gtag('consent','update',{analytics_storage:'granted'});
+      }
+      box.classList.remove('show');
+    }
+    document.getElementById('consentOk').addEventListener('click',function(){choose('granted');});
+    document.getElementById('consentNo').addEventListener('click',function(){choose('denied');});
+  })();
 
   const io=new IntersectionObserver((es)=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.14});
   document.querySelectorAll('.rv').forEach(el=>io.observe(el));
