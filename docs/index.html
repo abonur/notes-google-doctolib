@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Notes Google pour Doctolib — la note Google des médecins, directement dans Doctolib</title>
+<meta name="description" content="Extension gratuite qui affiche la note Google des praticiens dans les résultats Doctolib, et sur la carte. Chrome, Firefox et Safari." />
+<link rel="icon" href="icon.png" />
+<meta property="og:title" content="Notes Google pour Doctolib" />
+<meta property="og:description" content="La note Google des médecins, directement dans les résultats Doctolib. Gratuit." />
+<meta property="og:image" content="screenshot.png" />
+<meta property="og:type" content="website" />
+<style>
+  :root{
+    --blue:#107ACA; --blue-d:#0A468C; --ink:#1B2733; --sub:#5B6B7B;
+    --bg:#F4F7FB; --card:#fff; --line:#E4EAF1;
+    --great:#1e8e3e; --ok:#f29900; --bad:#d93025;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--blue);text-decoration:none}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:10px;font-weight:600;font-size:15px;border:1px solid transparent;cursor:pointer}
+  .btn-primary{background:var(--blue);color:#fff}
+  .btn-primary:hover{background:var(--blue-d)}
+  .btn-ghost{background:#fff;color:var(--ink);border-color:var(--line)}
+  .btn-ghost:hover{border-color:#c8d3e0}
+
+  header{background:linear-gradient(180deg,#fff, var(--bg));border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;max-width:1040px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700}
+  .brand img{width:30px;height:30px;border-radius:7px}
+  .nav-links{display:flex;gap:18px;align-items:center;font-size:14px}
+  .nav-links a{color:var(--sub)}
+
+  .hero{text-align:center;padding:64px 0 40px}
+  .pill{display:inline-block;background:#E6F1FB;color:var(--blue-d);font-size:13px;font-weight:600;padding:5px 12px;border-radius:20px;margin-bottom:18px}
+  h1{font-size:42px;line-height:1.15;letter-spacing:-.5px;margin-bottom:16px}
+  h1 .hl{color:var(--blue)}
+  .lead{font-size:19px;color:var(--sub);max-width:640px;margin:0 auto 28px}
+  .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .shot{margin:44px auto 0;max-width:920px}
+  .shot img{width:100%;border-radius:14px;border:1px solid var(--line);box-shadow:0 20px 50px -20px rgba(16,40,80,.35)}
+
+  section{padding:54px 0}
+  .sec-title{text-align:center;font-size:28px;margin-bottom:8px}
+  .sec-sub{text-align:center;color:var(--sub);margin-bottom:36px}
+
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+  .step .n{width:34px;height:34px;border-radius:9px;background:#E6F1FB;color:var(--blue-d);font-weight:700;display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+  .step h3{font-size:17px;margin-bottom:6px}
+  .step p{color:var(--sub);font-size:15px}
+
+  .browsers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .bcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:26px 22px;text-align:center;display:flex;flex-direction:column;align-items:center}
+  .bcard .logo{font-size:42px;line-height:1;margin-bottom:14px}
+  .bcard h3{font-size:18px;margin-bottom:4px}
+  .bcard .status{font-size:13px;color:var(--sub);margin-bottom:18px}
+  .bcard .btn{width:100%}
+  .badge-live{display:inline-block;font-size:12px;font-weight:600;color:var(--great);background:#E1F3E7;padding:3px 9px;border-radius:12px}
+  .badge-soon{display:inline-block;font-size:12px;font-weight:600;color:#8a6d00;background:#FBEFCF;padding:3px 9px;border-radius:12px}
+
+  .feats{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:820px;margin:0 auto}
+  .feat{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+  .feat .dot{flex:0 0 auto;width:12px;height:12px;border-radius:50%;margin-top:6px}
+  .feat h3{font-size:16px;margin-bottom:3px}
+  .feat p{color:var(--sub);font-size:14px}
+
+  .legend{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:26px;font-size:14px;color:var(--sub)}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:13px;height:13px;border-radius:50%}
+
+  .privacy{background:#fff;border:1px solid var(--line);border-radius:16px;padding:34px;max-width:760px;margin:0 auto;text-align:center}
+  .privacy h2{font-size:24px;margin-bottom:10px}
+  .privacy p{color:var(--sub)}
+
+  footer{border-top:1px solid var(--line);background:#fff;padding:34px 0;margin-top:30px}
+  .foot{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;color:var(--sub);font-size:14px}
+  .foot a{color:var(--sub)}
+  .foot-links{display:flex;gap:18px;flex-wrap:wrap}
+
+  @media(max-width:760px){
+    h1{font-size:32px}
+    .steps,.browsers,.feats{grid-template-columns:1fr}
+    .nav-links{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand"><img src="icon.png" alt="" /> Notes Google pour Doctolib</div>
+    <nav class="nav-links">
+      <a href="#installer">Installer</a>
+      <a href="#fonctionnement">Fonctionnement</a>
+      <a href="https://github.com/abonur/notes-google-doctolib" target="_blank" rel="noopener">Code source</a>
+      <a class="btn btn-primary" href="#installer" style="padding:8px 14px">Installer</a>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="hero">
+    <span class="pill">Gratuit · Chrome · Firefox · Safari</span>
+    <h1>La <span class="hl">note Google</span> des médecins,<br />directement dans Doctolib</h1>
+    <p class="lead">Fini les allers-retours entre Doctolib et Google. Voyez la note (★ et nombre d'avis) de chaque praticien dans les résultats et sur la carte. Un clic ouvre les avis Google.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#installer">Installer l'extension</a>
+      <a class="btn btn-ghost" href="#fonctionnement">Voir comment ça marche</a>
+    </div>
+    <div class="shot"><img src="screenshot.png" alt="Notes Google affichées dans les résultats Doctolib et sur la carte" /></div>
+  </section>
+
+  <section id="fonctionnement">
+    <h2 class="sec-title">Comment ça marche</h2>
+    <p class="sec-sub">Trois fois plus rapide pour choisir un bon praticien.</p>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Cherchez normalement</h3><p>Faites votre recherche habituelle sur Doctolib (médecin, dentiste, spécialiste…).</p></div>
+      <div class="step"><div class="n">2</div><h3>Voyez les notes</h3><p>Une pastille colorée apparaît à côté de chaque praticien et sur la carte. Vert = bien noté, rouge = à éviter.</p></div>
+      <div class="step"><div class="n">3</div><h3>Lisez les avis</h3><p>Un clic sur la pastille ouvre directement les avis Google du praticien. Sans quitter Doctolib.</p></div>
+    </div>
+    <div class="legend">
+      <span><i class="sw" style="background:var(--great)"></i> 4,5 et plus</span>
+      <span><i class="sw" style="background:#7cb342"></i> 4,0 à 4,4</span>
+      <span><i class="sw" style="background:var(--ok)"></i> 3,5 à 3,9</span>
+      <span><i class="sw" style="background:var(--bad)"></i> moins de 3,5</span>
+    </div>
+  </section>
+
+  <section id="installer">
+    <h2 class="sec-title">Installer</h2>
+    <p class="sec-sub">Disponible sur vos trois navigateurs.</p>
+    <div class="browsers">
+      <div class="bcard">
+        <div class="logo">🌐</div>
+        <h3>Chrome</h3>
+        <div class="status"><span class="badge-live">● En ligne</span></div>
+        <a class="btn btn-primary" href="https://chromewebstore.google.com/detail/notes-google-pour-doctoli/jlkaeaclbjgpgiggddiikhdinhaaojcl" target="_blank" rel="noopener">Ajouter à Chrome</a>
+      </div>
+      <div class="bcard">
+        <div class="logo">🦊</div>
+        <h3>Firefox</h3>
+        <div class="status"><span class="badge-soon">● En validation</span></div>
+        <a class="btn btn-ghost" href="https://addons.mozilla.org/fr/firefox/addon/notes-google-pour-doctolib/" target="_blank" rel="noopener">Voir sur Firefox</a>
+      </div>
+      <div class="bcard">
+        <div class="logo">🧭</div>
+        <h3>Safari</h3>
+        <div class="status"><span class="badge-soon">● Bientôt sur le Mac App Store</span></div>
+        <a class="btn btn-ghost" href="#" onclick="return false" style="opacity:.6;cursor:default">Bientôt disponible</a>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-title">Pensée pour la confiance</h2>
+    <p class="sec-sub">Simple, transparente, respectueuse.</p>
+    <div class="feats">
+      <div class="feat"><i class="dot" style="background:var(--great)"></i><div><h3>100 % gratuit</h3><p>Pas de compte, pas de pub, pas de version payante.</p></div></div>
+      <div class="feat"><i class="dot" style="background:var(--blue)"></i><div><h3>Aucune donnée perso collectée</h3><p>Seuls le nom et l'adresse publics des praticiens transitent, pour récupérer leur note.</p></div></div>
+      <div class="feat"><i class="dot" style="background:var(--ok)"></i><div><h3>Notes officielles</h3><p>Données fournies par l'API officielle Google Places — pas de scraping.</p></div></div>
+      <div class="feat"><i class="dot" style="background:#7cb342"></i><div><h3>Open source</h3><p>Le code est public et vérifiable sur GitHub.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="privacy">
+      <h2>Vous aimez l'extension ?</h2>
+      <p style="margin-bottom:20px">Elle est et restera gratuite. Un café aide à la maintenir et à ajouter de nouvelles fonctions.</p>
+      <a class="btn btn-primary" href="https://buymeacoffee.com/abonur" target="_blank" rel="noopener" style="background:#ffdd00;color:#111">☕ Offrir un café</a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap foot">
+    <div>© 2026 Ruwad — Extension indépendante, non affiliée à Doctolib ni à Google.</div>
+    <div class="foot-links">
+      <a href="privacy-policy.html">Confidentialité</a>
+      <a href="https://github.com/abonur/notes-google-doctolib" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:abonur@ruwad.io">Contact</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
