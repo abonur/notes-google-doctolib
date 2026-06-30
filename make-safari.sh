@@ -22,8 +22,9 @@ xcrun safari-web-extension-converter "$PWD/safari-src" \
 PBX="safari/Notes Google pour Doctolib/Notes Google pour Doctolib.xcodeproj/project.pbxproj"
 if [ -f "$PBX" ]; then
   sed -i '' 's#\(PRODUCT_BUNDLE_IDENTIFIER = io\.ruwad\.NotesGoogleDoctolib;\)#\1\
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";#g' "$PBX"
-  echo "✅ LSApplicationCategoryType = utilities ajouté à la cible app macOS"
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";\
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;#g' "$PBX"
+  echo "✅ LSApplicationCategoryType=utilities + ITSAppUsesNonExemptEncryption=NO ajoutés (cible app macOS)"
 fi
 
 echo
